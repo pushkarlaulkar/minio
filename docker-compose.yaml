@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  minio:
+    image: minio/minio:RELEASE.2023-01-02T09-40-09Z
+    volumes:
+      - /opt/services/minio-data:/data
+      - /opt/services/certs:${HOME}/.minio/certs
+      - /opt/services/certs/CAs/ca.crt:${HOME}/.minio/certs/CAs/ca.crt
+    ports:
+      - "443:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: username     # Username that you want
+      MINIO_ROOT_PASSWORD: password   # Password that you want
+      MINIO_SERVER_URL: "https://domain_name"  #Put your domain name here, for e.g. https://minio.abc.com
+    command: server --console-address ":9001" /data
+    container_name: minio
+    hostname: minio
+    restart: unless-stopped
+    networks:
+      - services_net
+
+networks:
+  services_net:
+    driver: bridge
